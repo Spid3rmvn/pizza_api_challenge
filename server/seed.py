@@ -41,12 +41,12 @@ def seed_data():
 
         # Create RestaurantPizzas (sample relationships)
         restaurant_pizzas = [
-            RestaurantPizza(price=10, restaurant_id=1, pizza_id=1),
-            RestaurantPizza(price=15, restaurant_id=1, pizza_id=2),
-            RestaurantPizza(price=12, restaurant_id=2, pizza_id=1),
-            RestaurantPizza(price=18, restaurant_id=2, pizza_id=3),
-            RestaurantPizza(price=14, restaurant_id=3, pizza_id=4),
-            RestaurantPizza(price=16, restaurant_id=3, pizza_id=5),
+            RestaurantPizza(price=10, restaurant_id=restaurants[0].id, pizza_id=pizzas[0].id),
+            RestaurantPizza(price=15, restaurant_id=restaurants[0].id, pizza_id=pizzas[1].id),
+            RestaurantPizza(price=12, restaurant_id=restaurants[1].id, pizza_id=pizzas[0].id),
+            RestaurantPizza(price=18, restaurant_id=restaurants[1].id, pizza_id=pizzas[2].id),
+            RestaurantPizza(price=14, restaurant_id=restaurants[2].id, pizza_id=pizzas[3].id),
+            RestaurantPizza(price=16, restaurant_id=restaurants[2].id, pizza_id=pizzas[4].id),
         ]
 
         for rp in restaurant_pizzas:
