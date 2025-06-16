@@ -275,4 +275,179 @@ Set the following variable in Postman:
 - ✅ Get all pizzas
 - ✅ Create restaurant-pizza relationship (valid)
 - ✅ Create restaurant-pizza relationship (invalid price - too low)
-- ✅
+- ✅ Create restaurant-pizza relationship (invalid price - too high)
+- ✅ Create restaurant-pizza relationship (missing required fields)
+
+## 🗄️ Database Schema
+
+### Tables
+
+#### restaurants
+- `id` (Primary Key)
+- `name` (String, Not Null)
+- `address` (String, Not Null)
+
+#### pizzas
+- `id` (Primary Key)
+- `name` (String, Not Null)
+- `ingredients` (String, Not Null)
+
+#### restaurant_pizzas
+- `id` (Primary Key)
+- `price` (Integer, Not Null, 1-30)
+- `restaurant_id` (Foreign Key → restaurants.id)
+- `pizza_id` (Foreign Key → pizzas.id)
+
+### Relationships
+- **Restaurant** has many **RestaurantPizzas** (one-to-many)
+- **Pizza** has many **RestaurantPizzas** (one-to-many)
+- **RestaurantPizza** belongs to **Restaurant** and **Pizza** (many-to-one)
+- Cascading delete: When a Restaurant is deleted, all related RestaurantPizzas are automatically deleted
+
+## 🚨 Error Handling
+
+The API handles various error scenarios:
+
+### 404 Errors
+- Restaurant not found
+- Pizza not found
+
+### 400 Errors
+- Invalid price (outside 1-30 range)
+- Missing required fields
+- Invalid data format
+
+### Example Error Responses
+
+**Validation Error:**
+```json
+{
+  "errors": ["Price must be between 1 and 30"]
+}
+```
+
+**Not Found Error:**
+```json
+{
+  "error": "Restaurant not found"
+}
+```
+
+**Missing Fields Error:**
+```json
+{
+  "errors": ["Missing required fields: price, pizza_id, restaurant_id"]
+}
+```
+
+## 🔄 Database Migration Commands
+
+```bash
+# Create a new migration after model changes
+flask db migrate -m "Description of changes"
+
+# Apply migrations to database
+flask db upgrade
+
+# Downgrade to previous migration (if needed)
+flask db downgrade
+
+# View migration history
+flask db history
+```
+
+## 🌱 Sample Data
+
+The seed script creates:
+
+### Restaurants
+1. **Dominion Pizza** - Good Italian, Ngong Road, 4th Floor
+2. **Pizza Hut** - Westgate Mall, Mwanzi Road
+3. **Kiki's Pizza** - Kilimani, Dennis Pritt Road
+
+### Pizzas
+1. **Cheese** - Dough, Tomato Sauce, Cheese
+2. **Pepperoni** - Dough, Tomato Sauce, Cheese, Pepperoni
+3. **California** - Dough, Sauce, Ricotta, Red peppers, Goat cheese, Italian sausage, Mushrooms
+4. **Margherita** - Dough, Tomato Sauce, Fresh Mozzarella, Basil
+5. **Hawaiian** - Dough, Tomato Sauce, Cheese, Ham, Pineapple
+
+### Restaurant-Pizza Relationships
+- Dominion Pizza: Cheese ($10), Pepperoni ($15)
+- Pizza Hut: Cheese ($12), California ($18)
+- Kiki's Pizza: Margherita ($14), Hawaiian ($16)
+
+## 🚀 Deployment Considerations
+
+### Environment Variables
+For production, set these environment variables:
+```bash
+export DATABASE_URL=postgresql://username:password@hostname:port/database_name
+export FLASK_ENV=production
+```
+
+### Production Configuration
+Update `server/config.py` for production:
+```python
+class ProductionConfig(Config):
+    DEBUG = False
+    # Add production-specific settings
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📋 Troubleshooting
+
+### Common Issues
+
+**1. Database Connection Error**
+- Ensure PostgreSQL is running
+- Check database credentials in `config.py`
+- Verify database exists
+
+**2. Migration Errors**
+- Delete `migrations/` folder and reinitialize
+- Check for circular imports in models
+
+**3. Import Errors**
+- Ensure you're in the project root directory
+- Check Python path and virtual environment
+
+**4. Port Already in Use**
+- Change port in `app.py`: `app.run(port=5001)`
+- Kill existing process: `lsof -ti:5000 | xargs kill -9`
+
+## 📞 API Testing Examples
+
+### Using curl
+
+**Get all restaurants:**
+```bash
+curl -X GET http://localhost:5000/restaurants
+```
+
+**Create restaurant-pizza relationship:**
+```bash
+curl -X POST http://localhost:5000/restaurant_pizzas \
+  -H "Content-Type: application/json" \
+  -d '{"price": 12, "pizza_id": 1, "restaurant_id": 2}'
+```
+
+**Delete a restaurant:**
+```bash
+curl -X DELETE http://localhost:5000/restaurants/1
+```
+
+## 📄 License
+
+This project is created for educational purposes as part of a coding challenge.
+
+---
+
+**Happy Coding! 🍕**
